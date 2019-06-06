@@ -1,7 +1,9 @@
-#Tips for install & configure vim 8.1 on CentOS 7.6
+# Tips for install & configure vim 8.1 on CentOS 7.6
 
-# cat /etc/centos-release
+```
+#cat /etc/centos-release
 CentOS Linux release 7.6.1810 (Core)
+```
 
 ### Install all the prerequisite libraries
 
@@ -26,7 +28,7 @@ yum list installed | grep -i vim
 yum remove vim-enhanced vim-common vim-filesystem
 ```
 
-### Download Vim source
+## Download Vim source
 ```
 git clone https://github.com/vim/vim.git
 cd vim
@@ -49,7 +51,7 @@ make install
 ```
 
 
-#### Check Vim version
+### Check Vim version
 ```
 vim --version | less
 ```
