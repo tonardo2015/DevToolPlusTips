@@ -6,6 +6,6 @@ development and debug
 | Topic | Link |  
 |------|------|  
 | vim | [configure_vim.md](https://github.com/tonardo2015/DevToolPlusTips/blob/master/configure_vim.md)|
-| tmux | [tmux_tip.md](https://github.com/tonardo2015/DevToolPlusTips/blob/master/Docker_Tips.md)|
+| tmux | [tmux_tip.md](https://github.com/tonardo2015/DevToolPlusTips/blob/master/tmux_tip.md)|
 | docker | [Docker_Tips.md](https://github.com/tonardo2015/DevToolPlusTips/blob/master/Docker_Tips.md)|  
 
