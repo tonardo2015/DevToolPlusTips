@@ -56,3 +56,16 @@ make install
 vim --version | less
 ```
 check if: +lua +multi_byte +perl +python +ruby 
+
+## Change color scheme of vim 
+1. Enter command mode and input ":terminal"
+2. Check available color scheme in the system by command 
+```
+ls -l /usr/share/vim/vim*/colors/
+```
+3. Edit "~/.vimrc" and add below lines
+```
+syntax on
+colorscheme torte
+```
+Note: The "torte" here is the color scheme you choose for update
