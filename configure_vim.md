@@ -28,7 +28,7 @@ yum list installed | grep -i vim
 yum remove vim-enhanced vim-common vim-filesystem
 ```
 
-## Download Vim source
+### Download Vim source
 ```
 git clone https://github.com/vim/vim.git
 cd vim
@@ -46,21 +46,21 @@ cd vim
 --enable-largefile \
 --enable-fail-if-missing \
 --prefix=/usr/local/
-
 ```
 
-Note: VIM does not support python and python3 at the same time.
-UltiSnips.vim has some problem with python, error like below would
-occur with python:
+> **Note:** VIM does not support python and python3 at the same time.
+**UltiSnips.vim** has some problem with python, error like below would
+occur with python:  
+```
 E837: This Vim cannot execute :py3 after using :python
-
+```
 It is recommended to compile vim with python3 support.
 
 You can use below method to check your vim's python enablement:
 Enter command mode, type `:echo has('python3')` or `:echo has('python')`.
 If the output is '1', it means supported, else the output is '0'.
 
-### Build
+### Build and install
 ```
 make
 make install
@@ -71,9 +71,10 @@ make install
 ```
 vim --version | less
 ```
-check if: +lua +multi_byte +perl +python +ruby 
+check if: +lua +multi_byte +perl +python3 +ruby 
+![vim python enablement](img/vim-support.png)
 
-## Change color scheme of vim 
+### Change color scheme of vim 
 1. Enter command mode and input ":terminal"
 2. Check available color scheme in the system by command 
 ```
@@ -84,11 +85,12 @@ ls -l /usr/share/vim/vim*/colors/
 syntax on
 colorscheme torte
 ```
-Note: The "torte" here is the color scheme you choose for update
+> **Note:** The "torte" here is the color scheme you choose for update
 
 ```
 ln -s /usr/local/bin/vim /usr/bin/vim 
 ```
+
 ## To customize VIM into one IDE  
 Install the dependency, including nodejs, ag
 
@@ -111,10 +113,10 @@ npm -version
 ```
 Reference: https://phoenixnap.com/kb/install-node-js-npm-centos
 
-## Installing ag on CentOS  
+### Installing ag on CentOS  
 #### Prerequistes  
-- libpcre
-- liblzma
+- libpcre (https://centos.pkgs.org/7/centos-x86_64/pcre-8.32-17.el7.x86_64.rpm.html)
+- liblzma (https://centos.pkgs.org/7/centos-x86_64/xz-devel-5.2.2-1.el7.x86_64.rpm.html)
 
 Download, build and install
 ```c
@@ -133,13 +135,27 @@ yum install -y the_silver_searcher
 Reference:  
 https://gist.github.com/rkaneko/988c3964a3177eb69b75  
 
-## Clone and install vim config  
+### Clone and install vim config  
 ```c
 git clone https://github.com/sebdah/vim-ide.git
 cd vim-ide
 sudo ./install.sh
 ```
-Reference:  
-https://github.com/sebdah/vim-ide
-https://vimawesome.com/
-https://tpaschalis.github.io/vim-go-setup/
+
+## neovim installation  
+```
+# https://github.com/neovim/neovim/wiki/Installing-Neovim
+yum -y install epel-release
+curl -o /etc/yum.repos.d/dperson-neovim-epel-7.repo https://copr.fedorainfracloud.org/coprs/dperson/neovim/repo/epel-7/dperson-neovim-epel-7.repo 
+yum -y install neovim --enablerepo=epel
+```
+
+The default path of Neovim:  
+- **~/.vimrc** has been replaced with **~/.config/nvim/init.vim**. If you install neovim success but this folder does not display, you can create it manually.
+- **~/.vim** folder has been replaced with **~/.local/share/nvim/site** folder.
+
+####Reference:  
+[vim-ide](https://github.com/sebdah/vim-ide)
+[vimawesome](https://vimawesome.com/)
+[vim-go-setup](https://tpaschalis.github.io/vim-go-setup/)
+
