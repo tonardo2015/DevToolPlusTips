@@ -37,12 +37,28 @@ cd vim
 ### Configure
 ```
 ./configure --with-features=huge \
---enable-multibyte    \
---enable-rubyinterp   \
---enable-pythoninterp \
---enable-perlinterp   \
---enable-luainterp
+--enable-multibyte \
+--enable-python3interp \
+--enable-rubyinterp \
+--enable-perlinterp \
+--enable-luainterp \
+--enable-cscope \
+--enable-largefile \
+--enable-fail-if-missing \
+--prefix=/usr/local/
+
 ```
+
+Note: VIM does not support python and python3 at the same time.
+UltiSnips.vim has some problem with python, error like below would
+occur with python:
+E837: This Vim cannot execute :py3 after using :python
+
+It is recommended to compile vim with python3 support.
+
+You can use below method to check your vim's python enablement:
+Enter command mode, type `:echo has('python3')` or `:echo has('python')`.
+If the output is '1', it means supported, else the output is '0'.
 
 ### Build
 ```
@@ -110,6 +126,9 @@ cd the_silver_searcher
 sudo ./build.sh
 sudo make install
 which ag
+
+# Another way to install ag
+yum install -y the_silver_searcher
 ```
 Reference:  
 https://gist.github.com/rkaneko/988c3964a3177eb69b75  
