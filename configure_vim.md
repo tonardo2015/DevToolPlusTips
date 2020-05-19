@@ -58,7 +58,8 @@ It is recommended to compile vim with python3 support.
 
 You can use below method to check your vim's python enablement:
 Enter command mode, type `:echo has('python3')` or `:echo has('python')`.
-If the output is '1', it means supported, else the output is '0'.
+If the output is '1', it means supported, else the output is '0'.  
+
 
 ### Build and install
 ```
@@ -66,15 +67,14 @@ make
 make install
 ```
 
-
 ### Check Vim version
 ```
 vim --version | less
 ```
 check if: +lua +multi_byte +perl +python3 +ruby 
-![vim python enablement](img/vim-support.png)
+![vim python enablement](img/vim-support.png)  
 
-### Change color scheme of vim 
+### Change color scheme of vim   
 1. Enter command mode and input ":terminal"
 2. Check available color scheme in the system by command 
 ```
@@ -110,7 +110,7 @@ sudo yum install -y nodejs
 ```c
 node -version
 npm -version
-```
+```  
 Reference: https://phoenixnap.com/kb/install-node-js-npm-centos
 
 ### Installing ag on CentOS  
@@ -118,7 +118,7 @@ Reference: https://phoenixnap.com/kb/install-node-js-npm-centos
 - libpcre (https://centos.pkgs.org/7/centos-x86_64/pcre-8.32-17.el7.x86_64.rpm.html)
 - liblzma (https://centos.pkgs.org/7/centos-x86_64/xz-devel-5.2.2-1.el7.x86_64.rpm.html)
 
-Download, build and install
+#### Download, build and install
 ```c
 sudo yum install -y pcre-devel
 sudo yum install xz-devel
@@ -154,8 +154,8 @@ The default path of Neovim:
 - **~/.vimrc** has been replaced with **~/.config/nvim/init.vim**. If you install neovim success but this folder does not display, you can create it manually.
 - **~/.vim** folder has been replaced with **~/.local/share/nvim/site** folder.
 
-####Reference:  
-[vim-ide](https://github.com/sebdah/vim-ide)
-[vimawesome](https://vimawesome.com/)
-[vim-go-setup](https://tpaschalis.github.io/vim-go-setup/)
+### Reference:  
+- [vim-ide](https://github.com/sebdah/vim-ide)  
+- [vimawesome](https://vimawesome.com/)  
+- [vim-go-setup](https://tpaschalis.github.io/vim-go-setup/)  
 
