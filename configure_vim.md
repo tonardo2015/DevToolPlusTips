@@ -72,7 +72,7 @@ make install
 vim --version | less
 ```
 check if: +lua +multi_byte +perl +python3 +ruby 
-![vim python enablement](img/vim-support.png) <!-- .element style="border: 0; background: None; box-shadow: None" height="50%" width="50%" --> 
+![vim python enablement](img/vim-support.png){:height="1672px" width="648px"}
 
 ### Change color scheme of vim   
 1. Enter command mode and input ":terminal"
