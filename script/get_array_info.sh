@@ -21,6 +21,7 @@
 #  No information for os-d8532 ()
 #
 
+
 array_name=""
 array_spa=""
 array_spb=""
@@ -30,6 +31,7 @@ array_passwd=""
 array_default_passwd=""
 lic_path=""
 initialized=""
+ssh_passwd=""
 
 NET_CFG_FILE="./array_network.conf"
 ARRAY_CFG_FILE="./test.conf"
@@ -72,8 +74,8 @@ set timeout -1
 spawn ssh root@$array_spa
 expect "yes/no" {
 send "yes\r"
-    expect "*?assword" { send "c4proto!\r" }
-} "*?assword" { send "c4proto!\r" }
+    expect "*?assword" { send "$ssh_passwd\r" }
+} "*?assword" { send "$ssh_passwd\r" }
 expect {[#>$]} { 
 	send {pgrep ECOM | wc -l}
 	send "\r" }
@@ -83,12 +85,20 @@ expect {
             expect {[#>$]} {
 		send {$mgmt_setup_cmd}
 		send "\r"} 
-	    expect "*#" {send "exit\r"} 
-	    expect "*#" {send "exit\r"} }
+	        expect -re "# " {
+		    send {echo "ECOM is in SPB"}
+		    send "\r"
+		    expect -re "# " {send "logout\r"}}
+	        expect -re "# " {send "logout\r"}	
+	    } 
     "1" {
 	    send {$mgmt_setup_cmd} 
        	    send "\r" 
-	    expect "*#" {send "exit\r"}  
+	    expect -re "# " {
+		send {echo "ECOM is in SPA"}
+		send "\r"
+		expect -re "# " {send "logout\r"}
+	    }  
 	} 
       }
 
@@ -105,11 +115,7 @@ function initialize {
     after_reset="$cmd_str $array_passwd"
 
     eula_cmd="$before_reset /sys/eula set -agree yes"
-
-    #pwd_reset_cmd="$before_reset /user/account -id user_admin set -passwd Password123! -force"
     pwd_reset_cmd="$before_reset /user/account -id user_admin set -passwd $array_passwd -force"
-
-    #lic_cmd="$after_reset -upload -f /c4shares/Public/license/Goshawk/license-any-host-Goshawk-ESSENTIAL.lic license"
     lic_cmd="$after_reset -upload -f $lic_path license"
 
     cfg_flag_key="${array_name/-/_}_initialized"
@@ -135,21 +141,7 @@ function initialize {
 
 function version_check {
 
-#/usr/bin/expect << EOD
-#set timeout -1
-#spawn ssh root@$array_spa
-#expect "yes/no" {
-#    send "yes\r"
-#    expect "*?assword" { send "c4proto!\r" }
-#} ".*?assword" { send "c4proto!\r" }
-#expect {[#>$]} { send "cat /.version\r" }
-#expect {[#>$]} { send "exit\r"}
-#
-#expect eof
-#EOD
-
 build_file=$array_name.build
-#"uemcli -d $array_mgmt -u admin -p Password123! -noHeader -sslPolicy store /sys/soft/ver show | grep Version | cut -d'=' -f2 | xargs"
 cmd="uemcli -d $array_mgmt -u $array_user -p $array_passwd -noHeader -sslPolicy store /sys/soft/ver show"
 echo $cmd
 $cmd > $build_file
@@ -175,10 +167,10 @@ fi
 
 }
 
+
 #get_array_config $array_name
 #echo "Main: $array_spa $array_spb $array_mgmt"
 
-#array_list=("os-d8000" "os-d8526" "os-d8527" "os-d8532" "os-d8535" "os-d8536" "os-d8544")
 #Configuration "array_list" is defined in test.conf
 echo "${array_list[@]}"
 for iter in "${array_list[@]}"; do
