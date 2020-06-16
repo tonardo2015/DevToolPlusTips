@@ -40,6 +40,7 @@ source "$ARRAY_CFG_FILE"
 
 
 function get_array_config {
+
 array_name=$1
 FILE=$array_name.tmp
 if [ ! -f "$FILE" ]; then
@@ -54,7 +55,9 @@ echo "[$array_name]: array_spa=$array_spa;array_spb=$array_spb;array_mgmt=$array
 
 
 function set_config {
-    sudo sed -i "s/^\($1\s*=\s*\).*\$/\1$2/" "$ARRAY_CFG_FILE"
+
+sudo sed -i "s/^\($1\s*=\s*\).*\$/\1$2/" "$ARRAY_CFG_FILE"
+
 }
 
 
@@ -110,31 +113,33 @@ EOD
 
 function initialize {
 
-    cmd_str="uemcli -d $array_mgmt -sslPolicy accept -u Local/admin -p"
-    before_reset="$cmd_str $array_default_passwd"
-    after_reset="$cmd_str $array_passwd"
+cmd_str="uemcli -d $array_mgmt -sslPolicy accept -u Local/admin -p"
+before_reset="$cmd_str $array_default_passwd"
+after_reset="$cmd_str $array_passwd"
 
-    eula_cmd="$before_reset /sys/eula set -agree yes"
-    pwd_reset_cmd="$before_reset /user/account -id user_admin set -passwd $array_passwd -force"
-    lic_cmd="$after_reset -upload -f $lic_path license"
+eula_cmd="$before_reset /sys/eula set -agree yes"
+pwd_reset_cmd="$before_reset /user/account -id user_admin set -passwd $array_passwd -force"
+lic_cmd="$after_reset -upload -f $lic_path license"
 
-    cfg_flag_key="${array_name/-/_}_initialized"
-    #echo "cfg_flag_key is: ${cfg_flag_key}"
-    #echo "cfg_flag_key content is ${!cfg_flag_key}"
-    if [ -z "${!cfg_flag_key}" ]; then
-        #echo "$eula_cmd"
-        #echo "$pwd_reset_cmd"
-        #echo "$lic_cmd"
+cfg_flag_key="${array_name/-/_}_initialized"
+#echo "cfg_flag_key is: ${cfg_flag_key}"
+#echo "cfg_flag_key content is ${!cfg_flag_key}"
 
-        $eula_cmd
-        $pwd_reset_cmd
-        $lic_cmd
+if [ -z "${!cfg_flag_key}" ]; then
+    echo "$eula_cmd"
+    $eula_cmd
 
-        #set_config initialized 1
-        echo "${cfg_flag_key}=1" | sudo tee --append "$ARRAY_CFG_FILE"
-    else
-	echo "${array_name} has already been initialized...no action required!"
-    fi
+    echo "$pwd_reset_cmd"
+    $pwd_reset_cmd
+
+    echo "$lic_cmd"
+    $lic_cmd
+
+    #set_config initialized 1
+    echo "${cfg_flag_key}=1" | sudo tee --append "$ARRAY_CFG_FILE"
+else
+    echo "${array_name} has already been initialized...no action required!"
+fi
 
 }
 
@@ -148,21 +153,39 @@ $cmd > $build_file
 array_bVer=$(echo $(cat ./$build_file | grep Version | cut -d'=' -f2 | xargs))
 echo -e "\"\e[32m$array_name\e[0m\" build version is \"\e[95m$array_bVer\e[0m\""
 rm -rf $build_file
+
 }
 
 
 function health_check {
 
-echo "Health check ongoing..."    
-#ping $array_mgmt
-#nc -w 2 -v $array_mgmt 443 < /dev/null; echo $? 
-nc -w 2 -v $array_mgmt 443 < /dev/null
-if (( $? )); then
+# nc -w 2 -v $array_mgmt 443 < /dev/null; echo $? 
+chk_cmd="nc -w 2 -v $array_mgmt 443"
+chk_cmd+=' < /dev/null'
+$chk_cmd
+
+# $?==0 means mangement interface check succeeds, return code is 0, else return code is 1
+if (($?)); then
+    __mgmt_ip_up=0
+else
+    __mgmt_ip_up=1
+fi
+
+echo $__mgmt_ip_up
+
+}
+
+
+function do_mgmt_ip_setup {
+
+mgmt_ip_up=$( health_check )
+#echo "mgmt_ip_up: ($mgmt_ip_up)"
+
+if [ $mgmt_ip_up ]; then
+    echo -e "Array \"\e[32m$array_name\e[0m\" management IP ($array_mgmt) is up"
+else
     echo -e "\e[1;31mArray $array_name's management IP ($array_mgmt) is NOT up\e[0m"
     set_mgmt_ip $array_name
-else
-    echo -e "Array \"\e[32m$array_name\e[0m\" management IP ($array_mgmt) is up"
-    #set_mgmt_ip $array_name
 fi
 
 }
@@ -175,7 +198,8 @@ fi
 echo "${array_list[@]}"
 for iter in "${array_list[@]}"; do
     get_array_config $iter
-    health_check
+    #health_check
+    do_mgmt_ip_setup
     initialize
     version_check
 done
