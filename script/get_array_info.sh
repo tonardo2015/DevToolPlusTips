@@ -158,20 +158,21 @@ rm -rf $build_file
 
 
 function health_check {
+# Note: only use one echo in health_check as echo is used as way to return value
+# additional echo would mess up the return value.
 
 # nc -w 2 -v $array_mgmt 443 < /dev/null; echo $? 
-chk_cmd="nc -w 2 -v $array_mgmt 443"
-chk_cmd+=' < /dev/null'
+chk_cmd="nc -w 2 -v $array_mgmt 443 < /dev/null; echo \$?"
 $chk_cmd
 
 # $?==0 means mangement interface check succeeds, return code is 0, else return code is 1
 if (($?)); then
-    __mgmt_ip_up=0
+    _mgmt_ip_up=0
 else
-    __mgmt_ip_up=1
+    _mgmt_ip_up=1
 fi
 
-echo $__mgmt_ip_up
+echo "$_mgmt_ip_up"
 
 }
 
@@ -179,9 +180,9 @@ echo $__mgmt_ip_up
 function do_mgmt_ip_setup {
 
 mgmt_ip_up=$( health_check )
-#echo "mgmt_ip_up: ($mgmt_ip_up)"
+echo "mgmt_ip_up: ($mgmt_ip_up)"
 
-if [ $mgmt_ip_up ]; then
+if (($mgmt_ip_up)) ; then
     echo -e "Array \"\e[32m$array_name\e[0m\" management IP ($array_mgmt) is up"
 else
     echo -e "\e[1;31mArray $array_name's management IP ($array_mgmt) is NOT up\e[0m"
