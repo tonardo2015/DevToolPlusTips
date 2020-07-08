@@ -39,7 +39,7 @@ source "$NET_CFG_FILE"
 source "$ARRAY_CFG_FILE"
 
 
-function get_array_config {
+function get_array_config() {
 
 array_name=$1
 FILE=$array_name.tmp
@@ -54,14 +54,14 @@ echo "[$array_name]: array_spa=$array_spa;array_spb=$array_spb;array_mgmt=$array
 }
 
 
-function set_config {
+function set_config() {
 
 sudo sed -i "s/^\($1\s*=\s*\).*\$/\1$2/" "$ARRAY_CFG_FILE"
 
 }
 
 
-function set_mgmt_ip {
+function set_mgmt_ip() {
 
 array_name=$1
 array_net_key=${array_name/-/_}
@@ -111,7 +111,7 @@ EOD
 }
 
 
-function initialize {
+function initialize() {
 
 cmd_str="uemcli -d $array_mgmt -sslPolicy accept -u Local/admin -p"
 before_reset="$cmd_str $array_default_passwd"
@@ -144,7 +144,7 @@ fi
 }
 
 
-function version_check {
+function version_check() {
 
 build_file=$array_name.build
 cmd="uemcli -d $array_mgmt -u $array_user -p $array_passwd -noHeader -sslPolicy store /sys/soft/ver show"
@@ -157,7 +157,7 @@ rm -rf $build_file
 }
 
 
-function health_check {
+function health_check() {
 # Note: only use one echo in health_check as echo is used as way to return value
 # additional echo would mess up the return value.
 
@@ -177,7 +177,28 @@ echo "$_mgmt_ip_up"
 }
 
 
-function do_mgmt_ip_setup {
+function progress() {
+#  pid="$1"
+#  kill -n 0 "${pid}" &> /dev/null && echo -ne "please wait"
+#  while kill -n 0 "${pid}" &> /dev/null ; do
+  echo "Wait for mgmt interface up..."
+  timer=10
+  mgmt_ip_up=$( health_check )
+  while [ $mgmt_ip_up -eq 0 ]; do
+    echo -n "."
+    sleep 2 
+    mgmt_ip_up=$( health_check )
+    timer=$(($timer - 1))
+    if [ $timer -eq 0 ]
+    then 
+	echo "Timeout: mgmt interface($array_mgmt) could not be brought up in 10 seconds!!!"
+	break
+    fi
+  done
+}
+
+
+function do_mgmt_ip_setup() {
 
 mgmt_ip_up=$( health_check )
 echo "mgmt_ip_up: ($mgmt_ip_up)"
@@ -187,6 +208,7 @@ if (($mgmt_ip_up)) ; then
 else
     echo -e "\e[1;31mArray $array_name's management IP ($array_mgmt) is NOT up\e[0m"
     set_mgmt_ip $array_name
+    progress # Wait for mgmt IP up
 fi
 
 }
@@ -196,6 +218,8 @@ fi
 #echo "Main: $array_spa $array_spb $array_mgmt"
 
 #Configuration "array_list" is defined in test.conf
+
+# Main() 
 echo "${array_list[@]}"
 for iter in "${array_list[@]}"; do
     get_array_config $iter
