@@ -9,6 +9,6 @@ $ grip . 0.0.0.0:8081
 ***Note:*** Please make sure 8081 port is not used by any other service 
 
 
-[Grip -- GitHub Readme Instant Preview](https://github.com/joeyespo/grip)
-
-[emoji-cheat-sheet](https://github.com/ikatyang/emoji-cheat-sheet/blob/master/README.md)
+- **[Grip: GitHub Readme Instant Preview](https://github.com/joeyespo/grip)**  
+- **[Emoji Cheat Sheet](https://github.com/ikatyang/emoji-cheat-sheet/blob/master/README.md)**   
+- **[Markdown Syntax Reference](https://www.markdownguide.org/basic-syntax/)** 
