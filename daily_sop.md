@@ -82,3 +82,38 @@ https://bencane.com/2014/10/13/quick-and-practical-reference-for-tcpdump/
 echo $variable | xargs echo -n
 ```
 > The `xargs` removes all the delimiters from the string. By default it uses the space as delimiter. The `echo -n` will remove the end of line >>> [More info](https://stackoverflow.com/questions/369758/how-to-trim-whitespace-from-a-bash-variable)
+
+## How to record command line operation
+> We can leverage `asciinema` to record and play command line operation.  
+- #### Installation  
+```
+$ sudo pip3 install asciinema 
+```
+- #### Usage: Record  
+```
+$ asciinema rec demo.cast
+```
+- #### Usage: Play  
+```
+$ asciinema play demo.cast
+```
+- #### Usage: Upload  
+```
+$ asciinema upload <filename>
+```  
+- #### How to use recorded screen in web
+> Use with stand-alone player on your website
+Download asciinema player from [player's releases page](https://github.com/asciinema/asciinema-player/releases) (you only need `.js` and `.css` file), then use it like this:
+```
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="/asciinema-player.css" />
+</head>
+<body>
+  <asciinema-player src="/168763.json" cols="80" rows="24"></asciinema-player>
+  ...
+  <script src="/asciinema-player.js"></script>
+</body>
+</html>
+```
+- More about [asciinema](https://asciinema.org/docs/usage)
