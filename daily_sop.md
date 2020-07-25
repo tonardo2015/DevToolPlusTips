@@ -117,3 +117,15 @@ Download asciinema player from [player's releases page](https://github.com/ascii
 </html>
 ```
 - More about [asciinema](https://asciinema.org/docs/usage)
+
+## Record screen using ffmpeg in Windows  
+- Download Setup Screen Capturer Recorder v0.12.10.noasync.exe from https://sourceforge.net/projects/screencapturer/files/
+- Install the "Screen Capturer Recorder" and add ffmpeg to Path
+- Check if the screen capture recorder and audio recorder installed successfully
+```
+ffmpeg -list_devices true -f dshow -i dummy
+```
+- To capture with ffmpeg, try below command
+```
+ffmpeg -f dshow -i video="screen-capture-recorder" -f dshow -i audio="virtual-audio-capturer" -pix_fmt yuv420p -vcodec libx264 -acodec libvo_aacenc -s 1280x720 -r 25 -q 10 -ar 44100 -ac 2 -tune zerolatency -preset ultrafast -f mpegts - | ffmpeg -f mpegts -i - -c copy -bsf:a aac_adtstoasc -f flv temp.flv  
+```
