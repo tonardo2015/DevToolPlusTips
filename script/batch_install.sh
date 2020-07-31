@@ -2,8 +2,6 @@
 
 #auto_install_upgrade.sh -a os-d8564 -i /builds/storage/KH/PIE-unity-integration-goshawk-842925-201910190804/output/image/NEXTOS_DEBUG/OS-c4dev_PIE_4737R-5.1.0.1.1.097-NEXTOS_DEBUG.tgz.bin | tee /tmp/os-d8546-inst.log > /dev/null &
 
-set -m
-
 CFG_FILE="./test.conf"
 ParentDir="/tmp/"
 index=0
@@ -25,7 +23,7 @@ function get_array_config() {
   array_name=$1
   FILE=$array_name.tmp
   if [ ! -f "$FILE" ]; then
-  swarm $1 > $FILE
+  swarm "$array_name" > $FILE
   fi
   array_spa=$(cat $FILE | grep "Lab IP SPA" | awk -F':' 'NR=2{split($2,a," ");print a[1]}')
   array_spb=$(cat $FILE | grep "Lab IP SPB" | awk -F':' 'NR=2{split($2,a," ");print a[1]}')
@@ -60,7 +58,7 @@ function upgrade() {
     cmdBase="uemcli -sslPolicy accept -noHeader -u $array_user -p $array_passwd -d $array_mgmt"
     cmdUpload="$cmdBase -upload -f $build upgrade"
     echo "$cmdUpload"
-    $cmdUpload | tee -a $logPath
+    $cmdUpload | tee -a "$logPath"
 
     #cmd="$cmdBase /sys/soft/ver -type candidate show -detail | grep ID | cut -d'=' -f2 | xargs echo"
     cmd="$cmdBase /sys/soft/ver -type candidate show -detail"
@@ -70,7 +68,7 @@ function upgrade() {
     cmdCrtUpgrade="$cmdBase /sys/soft/upgrade create -candId $cID" 
 
     echo "$cmdCrtUpgrade"
-    $cmdCrtUpgrade | tee -a $logPath
+    $cmdCrtUpgrade | tee -a "$logPath"
 }
 
 
@@ -80,7 +78,7 @@ function doInstall() {
     if [ "$install_option" == "install" ]; then
         #cmd_inst="auto_install_upgrade.sh -a $my_array -i $build > $logPath 2>&1 &"
 	#echo $cmd_inst
-        runuser -l c4dev -c "auto_install_upgrade.sh -a $iter $opt $build > $logPath 2>&1 &"
+        runuser -l c4dev -c "auto_install_upgrade.sh -a $iter -i $build > $logPath 2>&1 &"
     else
 	upgrade $my_array
     fi
@@ -89,13 +87,13 @@ function doInstall() {
 
 # main start here
 echo $build
-echo ${array_list[@]}
+echo "${array_list[@]}"
 validateBuild
 
 for iter in "${array_list[@]}"; do
    postfix="-inst.log"
    logPath="$ParentDir$iter$postfix"
-   cat /dev/null > $logPath
+   cat /dev/null > "$logPath"
    LOG_FILES[$index]=$logPath
    #index=$(echo "$index+1" | bc -l)
    index=$(($index + 1))
@@ -104,6 +102,6 @@ done
 
 echo "${#array_list[@]} array $install_option job(s) have started in the backend, check the *-inst.log in $ParentDir directory for progress!"
 
-for i in ${LOG_FILES[@]}; do
+for i in "${LOG_FILES[@]}"; do
     echo -e "\e[32m$i\e[0m"
 done
