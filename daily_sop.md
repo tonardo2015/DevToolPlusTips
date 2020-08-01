@@ -365,3 +365,34 @@ _DEBUG="off"
 ```
 au bufnewfile *.sh 0r ~/.vim/sh_header.temp
 ```
+## Cmder configuration
+- What is [Cmder](https://cmder.net/)  
+- How to install?
+    - Download from [Cmder site](https://cmder.net/) 
+    - Unzip
+    - Put the executable to you preferred installation folder, e.g. `C:\Program Files\cmder`
+    - Run `Cmder`
+- Hot Keys
+```
+Ctrl + ` : Global Summon from taskbar
+Win + Alt + p : Preferences (Or right click on title bar)
+Ctrl + t : New tab dialog (maybe you want to open cmd as admin?)
+Ctrl + w : Close tab
+Shift + Alt + number : Fast new tab:
+    1. CMD
+    2. PowerShell
+Alt + Enter : Fullscreen
+```
+- Advanced configuration  
+    - change command prompt 
+    > Modify `vendor\clink.lua` in cmder installation folder and replace below lines with your changes  
+    ```
+    local cmder_prompt = "\x1b[1;32;40m{cwd} {git}{hg}{svn} \n\x1b[2;37;40m{lamb} \x1b[0m"
+    local lambda = "λ"
+    ```
+    - How to solve the word overlap issue  
+    `Win + ALT + P` to launch configuration window and check off the 'Monospace' in 'Fonts'
+
+    - `ls` Chinese character support  
+    `WIN + ALT + P` to launch configuraiton window, `Startup` -> `Environment`, add one line `set LANG=zh_CN.UTF-8`  
+- [Cmder reference](https://www.jianshu.com/p/26acbe2c72a7)
