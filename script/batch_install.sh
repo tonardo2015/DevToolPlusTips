@@ -2,6 +2,8 @@
 
 #auto_install_upgrade.sh -a os-d8564 -i /builds/storage/KH/PIE-unity-integration-goshawk-842925-201910190804/output/image/NEXTOS_DEBUG/OS-c4dev_PIE_4737R-5.1.0.1.1.097-NEXTOS_DEBUG.tgz.bin | tee /tmp/os-d8546-inst.log > /dev/null &
 
+
+_DEBUG="off"
 CFG_FILE="./test.conf"
 ParentDir="/tmp/"
 index=0
@@ -16,6 +18,16 @@ array_user=""
 array_passwd=""
 
 source "$CFG_FILE" 
+
+function DEBUG()
+{
+ [ "$_DEBUG" == "on" ] &&  $@
+}
+
+
+function usae() {
+    echo "Usage: xxx"
+}
 
 
 function get_array_config() {
@@ -76,16 +88,19 @@ function doInstall() {
 
     my_array=$1
     if [ "$install_option" == "install" ]; then
-        #cmd_inst="auto_install_upgrade.sh -a $my_array -i $build > $logPath 2>&1 &"
-	#echo $cmd_inst
-        runuser -l c4dev -c "auto_install_upgrade.sh -a $iter -i $build > $logPath 2>&1 &"
+        cmd_inst="auto_install_upgrade.sh -a $my_array -i $build > $logPath 2>&1 &"
+	    #echo $cmd_inst
+        #runuser -l c4dev -c "auto_install_upgrade.sh -a $iter -i $build > $logPath 2>&1 &"
+        runuser -l c4dev -c "$cmd_inst"
     else
-	upgrade $my_array
+	    upgrade $my_array
     fi
 }
 
 
-# main start here
+# main 
+#[ $# -lt 1 ] && usage
+
 echo $build
 echo "${array_list[@]}"
 validateBuild
@@ -93,11 +108,17 @@ validateBuild
 for iter in "${array_list[@]}"; do
    postfix="-inst.log"
    logPath="$ParentDir$iter$postfix"
-   cat /dev/null > "$logPath"
+   #&sudo cat /dev/null > "$logPath"
+   if [ -f "$logPath" ]; then
+       chown c4dev:users "$logPath"
+       runuser -l c4dev -c "cat /dev/null > \"$logPath\""
+   fi
    LOG_FILES[$index]=$logPath
    #index=$(echo "$index+1" | bc -l)
    index=$(($index + 1))
+   DEBUG set -x
    doInstall $iter
+   DEBUG set +x
 done
 
 echo "${#array_list[@]} array $install_option job(s) have started in the backend, check the *-inst.log in $ParentDir directory for progress!"
