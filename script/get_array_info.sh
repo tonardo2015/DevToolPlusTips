@@ -182,16 +182,16 @@ function progress() {
 #  kill -n 0 "${pid}" &> /dev/null && echo -ne "please wait"
 #  while kill -n 0 "${pid}" &> /dev/null ; do
   echo "Wait for mgmt interface up..."
-  timer=10
+  timer=15
   mgmt_ip_up=$( health_check )
   while [ $mgmt_ip_up -eq 0 ]; do
     echo -n "."
-    sleep 2 
+    sleep 3 
     mgmt_ip_up=$( health_check )
     timer=$(($timer - 1))
     if [ $timer -eq 0 ]
     then 
-	echo "Timeout: mgmt interface($array_mgmt) could not be brought up in 10 seconds!!!"
+	echo "Timeout: mgmt interface($array_mgmt) could not be brought up in $timer seconds!!!"
 	break
     fi
   done
