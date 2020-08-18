@@ -48,9 +48,10 @@ $ ./configure --with-features=huge \
 --prefix=/usr/local/
 ```
 
-:label: **Note:** VIM does not support ***python*** and ***python3*** ***at the same time***.
+:label: **Note:** 
+> VIM does ***NOT*** support `python` and `python3` ***at the same time***.  
 **UltiSnips.vim** has some problem with python, error like below would
-occur with python:  
+occur with python  
 ```
 E837: This Vim cannot execute :py3 after using :python  
 ```
@@ -85,10 +86,13 @@ $ ls -l /usr/share/vim/vim*/colors/
 syntax on
 colorscheme torte
 ```
-> **Note:** The "torte" here is the color scheme you choose for update
+> **Note:** The `torte` here is the color scheme you choose for update
 
+- Add `ls` related command to `/usr/bin` 
 ```
 $ ln -s /usr/local/bin/vim /usr/bin/vim 
+$ ln -s /usr/local/bin/vimdiff /usr/bin/vimdiff 
+$ ln -s /usr/local/bin/vimtutor /usr/bin/vimtutor 
 ```
 
 ## To customize VIM into one IDE   
@@ -169,3 +173,15 @@ The default path of Neovim:
 - [vimawesome](https://vimawesome.com/)  
 - [vim-go-setup](https://tpaschalis.github.io/vim-go-setup/)  
 
+## How to fix VIM could not display color scheme properly in TMUX sessions
+Add or update the `TERM` in `/etc/proflie` and set it to `xterm-256color` as below
+```
+TERM=xterm-256color
+export TERM
+```
+To make the change take effects, you need to reboot host or `source /etc/profile`
+Besides, please make sure below configuration exists in your `~/.vimrc`
+```
+set t_Co=256
+set background=dark
+```
