@@ -22,6 +22,22 @@ sudo nano /etc/fstab
 ```
 mount 10.10.0.10:/backups /var/backups
 umount /var/backups
+
+# showmount <NFS-Server-IP> -e, e.g:
+# showmount 10.228.44.97 -e
+Export list for 10.228.44.97:
+/nfsOverUDPonPool1 (everyone)
+/nfsonPool1        (everyone)
+
+# rpcinfo -p <NFS-Server-IP> | egrep "service|nfs", e.g:
+# rpcinfo -p 10.228.44.97 | egrep "service|nfs"
+   program vers proto   port  service
+    100003    4   tcp   2049  nfs
+    100003    3   tcp   2049  nfs
+    100003    3   udp   2049  nfs
+
+#mount with UDP (only support in NFSv3)
+mount -t nfs -o rw,vers=3,proto=udp 10.228.44.97:/nfsonPool1 /tmp/mount_nfs
 ```
 
 The `umount` command will fail to detach the share when the mounted volume is in use. To find out which processes are accessing the NFS share, use the `fuser` command:
@@ -230,6 +246,8 @@ kill <pid>
 
 pkill wget
 
+killall wget
+
 jobs
 kill %<jobId>
 
@@ -396,3 +414,26 @@ Alt + Enter : Fullscreen
     - `ls` Chinese character support  
     `WIN + ALT + P` to launch configuraiton window, `Startup` -> `Environment`, add one line `set LANG=zh_CN.UTF-8`  
 - [Cmder reference](https://www.jianshu.com/p/26acbe2c72a7)
+
+## How to grant user `sudo` permission in CentOS
+- Enable `wheel` group
+> Open the configuration by below command
+```
+visudo
+```
+check if below entry in the file
+```
+## Allows people in group wheel to run all commands
+%wheel        ALL=(ALL)       ALL
+```
+- Add him/her to `wheel` group
+```
+usermod -aG wheel <Username>
+```
+
+## How to view .wrf file
+> Download WebEx Player from https://www.webex.com/video-recording.html
+
+## How to convert WRF file to mp4
+> Refer to https://case.edu/utech/sites/case.edu.utech/files/2019-05/Recording%20Instructions%20for%20webex%20mp4.pdf
+
