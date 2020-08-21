@@ -153,13 +153,13 @@ ioping -p 100 -c 200 -i 0 -q .
 ## I/O with Multipath(SLES)
 
 ```
-~# rpm -q open-iscsi
+~ # rpm -q open-iscsi
 open-iscsi-2.0.873-20.4.x86_64
 
-~# rpm -q multipath-tools
+~ # rpm -q multipath-tools
 multipath-tools-0.5.0-30.1.x86_64
 
-~# cat /etc/multipath.conf
+~ # cat /etc/multipath.conf
 defaults {
     verbosity 2
     no_path_retry "fail"
@@ -196,10 +196,10 @@ devices {
         dev_loss_tmo 60
     }
 }
+~ # service multipathd start
+~ # sudo multipath -v2 -d
 
-~# sudo multipath -v2 -d
-
-~# service multipathd status
+~ # service multipathd status
 multipathd.service - Device-Mapper Multipath Device Controller
    Loaded: loaded (/usr/lib/systemd/system/multipathd.service; enabled)
    Active: active (running) since Mon 2020-06-08 04:24:31 EDT; 2 months 10 days ago
@@ -209,31 +209,48 @@ multipathd.service - Device-Mapper Multipath Device Controller
    CGroup: /system.slice/multipathd.service
            └─512 /sbin/multipathd -d -s
 
+~ # cat /etc/iscsi/initiatorname.iscsi
+
 ##To Discovery iSCSI Target, try below commend
 # iscsiadm -m discoverydb -p <portal ip> -t st -D
-# iscsiadm -m discoverydb -p 10.228.44.62 -t st -D
+~ # iscsiadm -m discoverydb -p 10.228.44.62 -t st -D
 
 ##To Login iSCSI Taret
 # iscsiadm -m node -p <spa portal ip> -T <target port iqn> -l
-# iscsiadm -m node -p 10.228.44.62 -T iqn.1992-04.com.emc:cx.fcnch0972c2c3b.a1 -l
-# iscsiadm -m node -p 10.228.44.63 -T iqn.1992-04.com.emc:cx.fcnch0972c2c3b.b1 -l
+~ # iscsiadm -m node -p 10.228.44.62 -T iqn.1992-04.com.emc:cx.fcnch0972c2c3b.a1 -l
+~ # iscsiadm -m node -p 10.228.44.63 -T iqn.1992-04.com.emc:cx.fcnch0972c2c3b.b1 -l
 
 ##To Logout iSCSI Target
 # iscsiadm -m node -p <spa portal ip> -T <target port iqn> -u
-# iscsiadm -m node -T iqn.1992-04.com.emc:cx.fcnch0972c2c3b.a1 -p 10.228.44.62 -u
+~ # iscsiadm -m node -T iqn.1992-04.com.emc:cx.fcnch0972c2c3b.a1 -p 10.228.44.62 -u
 
 ##To Delete iSCSI sessions
-# iscsiadm -m node -o delete -T iqn.1992-04.com.emc:cx.fcnch0972c2c3b.a1 --portal 10.228.44.62:3260
+~ # iscsiadm -m node -o delete -T iqn.1992-04.com.emc:cx.fcnch0972c2c3b.a1 --portal 10.228.44.62:3260
 
-# Allocate LUN to Host from array side
+## Allocate LUN to Host from array side
 
-##Rescan Disk
-# iscsiadm -m session --rescan
+## To discover a new LUN on a system running Multipath, try below command to rescan Disk
+~ # iscsiadm -m session --rescan
 or
-# iscsiadm -m session -R
+~ # iscsiadm -m session -R
 
-##List the devices
-# multipath -ll
+##Rescan a specific session
+~ #iscsiadm -m session --sid=N --rescan
+##Note: N is the specific session ID
+
+~ # iscsiadm -m session
+tcp: [2] 10.228.44.62:3260,2 iqn.1992-04.com.emc:cx.fcnch0972c2c3b.a1 (non-flash)
+tcp: [3] 10.228.44.63:3260,1 iqn.1992-04.com.emc:cx.fcnch0972c2c3b.b1 (non-flash)
+~ # iscsiadm -m session --sid=2 --rescan
+Rescanning session [sid: 2, target: iqn.1992-04.com.emc:cx.fcnch0972c2c3b.a1, portal: 10.228.44.62,3260]
+~ # iscsiadm -m session --sid=3 --rescan
+Rescanning session [sid: 3, target: iqn.1992-04.com.emc:cx.fcnch0972c2c3b.b1, portal: 10.228.44.63,3260]
+
+##Rescan using the SCSI rescan script
+~ # /usr/bin/rescan-scsi-bus.sh
+
+##List the devices and check the LUN is assigned to host properly
+~ # multipath -ll
 mpathe (3600601607dd30a00afaa3b5faa581574) dm-4 DGC,VRAID
 size=5.0G features='1 queue_if_no_path' hwhandler='1 alua' wp=rw
 |-+- policy='queue-length 0' prio=50 status=active
@@ -259,7 +276,67 @@ size=5.0G features='1 queue_if_no_path' hwhandler='1 alua' wp=rw
 `-+- policy='queue-length 0' prio=10 status=enabled
   `- 4:0:0:1 sdf 8:80  active ready running
 
-# lsscsi
+##If some LUN is not listed in the `multipath -ll` output, you may check the Host ID (HUID) if it is '0' and update it to other value
+##Then re-scan the iSCSI with `iscsiadm -m session -R`
+
+~ # lsscsi
+[0:0:0:0]    disk    VMware   Virtual disk     1.0   /dev/sda
+[0:0:1:0]    disk    VMware   Virtual disk     1.0   /dev/sdb
+[2:0:0:0]    cd/dvd  NECVMWar VMware IDE CDR10 1.00  /dev/sr0
+[4:0:0:0]    disk    DGC      LUNZ             5100  /dev/sdc
+[4:0:0:1]    disk    DGC      VRAID            5100  /dev/sdf
+[4:0:0:2]    disk    DGC      VRAID            5100  /dev/sdh
+[4:0:0:3]    disk    DGC      VRAID            5100  /dev/sdj
+[4:0:0:4]    disk    DGC      VRAID            5100  /dev/sdl
+[4:0:0:5]    disk    DGC      VRAID            5100  /dev/sdn
+[5:0:0:0]    disk    DGC      LUNZ             5100  /dev/sdd
+[5:0:0:1]    disk    DGC      VRAID            5100  /dev/sde
+[5:0:0:2]    disk    DGC      VRAID            5100  /dev/sdg
+[5:0:0:3]    disk    DGC      VRAID            5100  /dev/sdi
+[5:0:0:4]    disk    DGC      VRAID            5100  /dev/sdk
+[5:0:0:5]    disk    DGC      VRAID            5100  /dev/sdm
+~ # multipath -ll
+mpathe (3600601607dd30a00afaa3b5faa581574) dm-4 DGC,VRAID
+size=5.0G features='1 queue_if_no_path' hwhandler='1 alua' wp=rw
+|-+- policy='queue-length 0' prio=50 status=active
+| `- 4:0:0:4 sdl 8:176 active ready running
+`-+- policy='queue-length 0' prio=10 status=enabled
+  `- 5:0:0:4 sdk 8:160 active ready running
+mpathd (3600601607dd30a00aeaa3b5f08d56f3f) dm-3 DGC,VRAID
+size=5.0G features='1 queue_if_no_path' hwhandler='1 alua' wp=rw
+|-+- policy='queue-length 0' prio=50 status=active
+| `- 5:0:0:3 sdi 8:128 active ready running
+`-+- policy='queue-length 0' prio=10 status=enabled
+  `- 4:0:0:3 sdj 8:144 active ready running
+mpathc (3600601607dd30a00aeaa3b5fa29d0a47) dm-2 DGC,VRAID
+size=5.0G features='1 queue_if_no_path' hwhandler='1 alua' wp=rw
+|-+- policy='queue-length 0' prio=50 status=active
+| `- 4:0:0:2 sdh 8:112 active ready running
+`-+- policy='queue-length 0' prio=10 status=enabled
+  `- 5:0:0:2 sdg 8:96  active ready running
+mpathb (3600601607dd30a00adaa3b5f7d6cdd27) dm-1 DGC,VRAID
+size=5.0G features='1 queue_if_no_path' hwhandler='1 alua' wp=rw
+|-+- policy='queue-length 0' prio=50 status=active
+| `- 5:0:0:1 sde 8:64  active ready running
+`-+- policy='queue-length 0' prio=10 status=enabled
+  `- 4:0:0:1 sdf 8:80  active ready running
+mpathf (3600601607dd30a00acaa3b5fa126fa52) dm-5 DGC,VRAID
+size=5.0G features='1 queue_if_no_path' hwhandler='1 alua' wp=rw
+|-+- policy='queue-length 0' prio=50 status=active
+| `- 4:0:0:5 sdn 8:208 active ready running
+`-+- policy='queue-length 0' prio=10 status=enabled
+  `- 5:0:0:5 sdm 8:192 active ready running
+
+##To run I/O with multipath, use the 'dm-xxx' as the device
+~ # ls -l /dev/dm*
+brw-rw---- 1 root disk 254, 0 Jun  8 04:24 /dev/dm-0
+brw-rw---- 1 root disk 254, 1 Aug 18 06:24 /dev/dm-1
+brw-rw---- 1 root disk 254, 2 Aug 18 06:24 /dev/dm-2
+brw-rw---- 1 root disk 254, 3 Aug 18 06:24 /dev/dm-3
+brw-rw---- 1 root disk 254, 4 Aug 18 06:24 /dev/dm-4
+brw-rw---- 1 root disk 254, 5 Aug 19 02:55 /dev/dm-5
+
+~ # lsscsi
 [0:0:0:0]    disk    VMware   Virtual disk     1.0   /dev/sda
 [0:0:1:0]    disk    VMware   Virtual disk     1.0   /dev/sdb
 [2:0:0:0]    cd/dvd  NECVMWar VMware IDE CDR10 1.00  /dev/sr0
@@ -274,10 +351,13 @@ size=5.0G features='1 queue_if_no_path' hwhandler='1 alua' wp=rw
 [5:0:0:3]    disk    DGC      VRAID            5100  /dev/sdi
 [5:0:0:4]    disk    DGC      VRAID            5100  /dev/sdk
 
-# ls /dev/sd*
+or
+~ # lsscsi -w -c -l
+
+~ # ls /dev/sd*
 /dev/sda  /dev/sda1  /dev/sdb  /dev/sdb1  /dev/sdc  /dev/sdd  /dev/sde  /dev/sdf  /dev/sdg  /dev/sdh  /dev/sdi  /dev/sdj  /dev/sdk  /dev/sdl
 
-# lsblk
+~ # lsblk
 NAME                         MAJ:MIN RM  SIZE RO TYPE  MOUNTPOINT
 fd0                            2:0    1    4K  0 disk
 sda                            8:0    0   50G  0 disk
@@ -308,12 +388,20 @@ loop0                          7:0    0  100G  0 loop
 loop1                          7:1    0    2G  0 loop
 └─docker-8:17-272252041-pool 254:0    0  100G  0 dm
 
+##Once the disk is seen by the OS execute `multiplath` or `multipath -v4` (verbose) to build the new MPIO map
+~ # multipath -v4
+
+##On SLES 10 execute `udevtrigger`. (On SLES11 udevadm trigger is executed automatically)
+
 ```
 - [SLES MPIO Reference](https://www.suse.com/support/kb/doc/?id=000016326)
 - [Managing Multipath I/O](https://documentation.suse.com/sles/15-SP1/html/SLES-all/cha-multipath.html)
+- [Add, Resize and Remove a LUN in SLES](https://www.suse.com/support/kb/doc/?id=000017762)
 
 > - LUNs are not seen by the driver
 > `lsscsi` can be used to check whether the SCSI devices are seen correctly by the OS. When the LUNs are not seen by the HBA driver, check the zoning setup of the SAN. In particular, check whether LUN masking is active and whether the LUNs are correctly assigned to the server.
 
 > - LUNs are seen by the driver, but there are no corresponding block devices  
 > When LUNs are seen by the HBA driver, but not as block devices, additional kernel parameters are needed to change the SCSI device scanning behavior, e.g. to indicate that LUNs are not numbered consecutively.
+
+

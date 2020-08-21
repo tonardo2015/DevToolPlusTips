@@ -437,3 +437,63 @@ usermod -aG wheel <Username>
 ## How to convert WRF file to mp4
 > Refer to https://case.edu/utech/sites/case.edu.utech/files/2019-05/Recording%20Instructions%20for%20webex%20mp4.pdf
 
+## Get the most popular command
+```
+history | awk '{CMD[$2]++;count++;}END { for (a in CMD) print CMD[a] " " CMD[a]/count*100 "% " a;}' | grep -v "./" | column -c3 -s " " -t | sort -nr | nl |  head -n10
+```
+## Sublime Text and Zeal integration
+- [Zealdocs Usage](https://zealdocs.org/usage.html)
+- [Zeal for Sublime Text](https://github.com/vaanwd/Zeal)
+
+## List file size by ascending
+```
+du -xsh * 2>/dev/null|sort -h
+```
+
+## How to create sparse file
+```
+~ # touch sparse
+~ # vim sparse
+~ # truncate -s 2M sparse
+~ # ls -lt sparse
+-rw-r--r-- 1 root root 2097152 Aug 20 04:59 sparse
+~ ls -lh sparse
+-rw-r--r-- 1 root root 2.0M Aug 20 04:59 sparse
+~ # du -sh sparse
+4.0K    sparse
+~ # file sparse
+sparse: ASCII text
+
+##1. Using the ‘dd‘ command’s ‘seek‘ option to create sparse file
+~ # dd if=/dev/zero of=sparse_file bs=1 count=0 seek=5M
+0+0 records in
+0+0 records out
+0 bytes (0 B) copied, 0.000296505 s, 0.0 kB/s
+~ # ls -lh sparse_file
+-rw-r--r-- 1 root root 5.0M Aug 20 05:26 sparse_file
+~ # du -sh sparse_file
+0       sparse_file
+##2. Using 'ls' command with '-s' option to view disk usage
+~ # ls -lhs sparse_file
+0 -rw-r--r-- 1 root root 5.0M Aug 20 05:26 sparse_file
+##3. Using 'du' with '--apparent-size' option to view file's apparent size
+~ # du -h --apparent-size sparse
+2.0M    sparse
+```
+
+## How to copy a sparse file
+> Copying a sparse file with a program that does not explicitly support them may copy the entire, uncompressed size of the file, including the sparse. So, when you copy a sparse file using cp command, the destination file gets changed to a fully allocated file. To copy a sparse file by keeping the destination copy as a sparse file, use any of the below commands.
+
+```
+# cp --sparse=always source_file new_file
+# rsync --sparse source_file new_file
+# cpio --sparse
+# tar --sparse
+```
+
+- [Sparse File](https://wiki.archlinux.org/index.php/sparse_file)
+
+## How to force umount a nfs share
+````
+umount -f -l /some_mount_point
+````

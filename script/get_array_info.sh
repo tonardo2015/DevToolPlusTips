@@ -44,7 +44,8 @@ function get_array_config() {
 array_name=$1
 FILE=$array_name.tmp
 if [ ! -f "$FILE" ]; then
-swarm $1 > $FILE
+    #/c4shares/auto/devutils/bin/swarm $1 > $FILE
+    swarm $1 > $FILE
 fi
 array_spa=$(cat $FILE | grep "Lab IP SPA" | awk -F':' 'NR=2{split($2,a," ");print a[1]}')
 array_spb=$(cat $FILE | grep "Lab IP SPB" | awk -F':' 'NR=2{split($2,a," ");print a[1]}')
