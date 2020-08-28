@@ -185,3 +185,19 @@ Besides, please make sure below configuration exists in your `~/.vimrc`
 set t_Co=256
 set background=dark
 ```
+
+## How to check the configuration vim used?
+```
+:echo $MYVIMRC
+```
+> *Note*: `:version` tells what locations are searched, but doesn't give any info regarding what files were found. For that the $MYVIMRC variable is useful, as is looking at output of `:scriptnames` for full list of all loaded script files, including all vimrc files
+
+## How to copy to clipboard in vim?
+> `vim ~/.vimrc.local` and add below lines
+```
+set mouse=v
+set clipboard=unnamedplus
+```
+
+## Learning Git
+- [Git](https://learngitbranching.js.org/?demo)

@@ -497,3 +497,22 @@ sparse: ASCII text
 ````
 umount -f -l /some_mount_point
 ````
+
+## How to reduce the size of video image
+```
+ffmpeg -i "input.flv" -r 10 -b:a 32k 1.mp4
+```
+> -i: input file  
+-r 10: 10 frames per second  
+-b:a 32k: sound code rate is 32kb/s, 3kB/s  
+1.mp4: output filename  
+
+- [FFmepg download](https://ffmpeg.org/download.html)  
+
+## How to quickly edit Windows Path
+> Win+Q -> input "Path" in the search box  
+
+## How to use git
+> Refer to 
+- [Useful Git Command](https://dev.to/lydiahallie/cs-visualized-useful-git-commands-37p1) and   
+- [Learning Git Branching](https://learngitbranching.js.org/?demo=&locale=zh_CN)  

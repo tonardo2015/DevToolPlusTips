@@ -146,9 +146,54 @@ ioping -p 100 -c 200 -i 0 -q .
 (9) total requests (including warmup, too slow or too fast)
 (10) total running time (nanoseconds)
 ```
+- How to install ioping
+```
+~ # git clone https://github.com/koct9i/ioping.git
+Cloning into 'ioping'...
+remote: Enumerating objects: 55, done.
+remote: Counting objects: 100% (55/55), done.
+remote: Compressing objects: 100% (37/37), done.
+remote: Total 746 (delta 33), reused 37 (delta 18), pack-reused 691
+Receiving objects: 100% (746/746), 202.24 KiB | 180.00 KiB/s, done.
+Resolving deltas: 100% (423/423), done.
+~ # cd ioping/
+~ # make
+gcc -o ioping ioping.c -DEXTRA_VERSION=\".16.gf549dff\" -g -O2 -funroll-loops -ftree-vectorize -std=gnu99 -Wall -Wextra -pedantic  -lm -lrt
+~ # make install
+mkdir -p /usr/local/bin
+install -m 0755 ioping /usr/local/bin
+mkdir -p /usr/local/share/man/man1
+install -m 644 ioping.1 /usr/local/share/man/man1
+~ # ioping -R /dev/dm-5
 
+--- /dev/dm-5 (block device 5 GiB) ioping statistics ---
+157 requests completed in 2.99 s, 628 KiB read, 52 iops, 210.3 KiB/s
+generated 158 requests in 3.01 s, 632 KiB, 52 iops, 210.2 KiB/s
+min/avg/max/mdev = 18.7 ms / 19.0 ms / 22.6 ms / 512.7 us
+~ # ioping -RL /dev/dm-5
+
+--- /dev/dm-5 (block device 5 GiB) ioping statistics ---
+59 requests completed in 2.70 s, 14.8 MiB read, 21 iops, 5.47 MiB/s
+generated 60 requests in 3.03 s, 15 MiB, 19 iops, 4.94 MiB/s
+min/avg/max/mdev = 37.8 ms / 45.7 ms / 185.5 ms / 24.2 ms
+~ # ioping /dev/dm-5
+4 KiB <<< /dev/dm-5 (block device 5 GiB): request=1 time=19.8 ms (warmup)
+4 KiB <<< /dev/dm-5 (block device 5 GiB): request=2 time=19.1 ms
+4 KiB <<< /dev/dm-5 (block device 5 GiB): request=3 time=19.2 ms
+4 KiB <<< /dev/dm-5 (block device 5 GiB): request=4 time=19.1 ms
+4 KiB <<< /dev/dm-5 (block device 5 GiB): request=5 time=19.1 ms
+4 KiB <<< /dev/dm-5 (block device 5 GiB): request=6 time=19.0 ms
+4 KiB <<< /dev/dm-5 (block device 5 GiB): request=7 time=19.1 ms
+4 KiB <<< /dev/dm-5 (block device 5 GiB): request=8 time=19.9 ms (slow)
+4 KiB <<< /dev/dm-5 (block device 5 GiB): request=9 time=19.1 ms
+4 KiB <<< /dev/dm-5 (block device 5 GiB): request=10 time=19.1 ms
+4 KiB <<< /dev/dm-5 (block device 5 GiB): request=11 time=19.2 ms
+4 KiB <<< /dev/dm-5 (block device 5 GiB): request=12 time=19.1 ms
+4 KiB <<< /dev/dm-5 (block device 5 GiB): request=13 time=19.2 ms
+
+```
 - [ioping reference](https://manpages.debian.org/testing/ioping/ioping.1.en.html)
-
+- [ioping github](https://github.com/koct9i/ioping/)
 
 ## I/O with Multipath(SLES)
 
