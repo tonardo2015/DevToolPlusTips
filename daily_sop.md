@@ -542,7 +542,7 @@ psql --version
 \l  
 \c dbuser  
 \dt  
-\q  
+\q
 ```
 
 #### Connect to PostgreSQL using psql
@@ -571,5 +571,4 @@ FROM
    information_schema.columns
 WHERE
    table_name = 'city';
-
 ```
