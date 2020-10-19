@@ -516,3 +516,52 @@ ffmpeg -i "input.flv" -r 10 -b:a 32k 1.mp4
 > Refer to 
 - [Useful Git Command](https://dev.to/lydiahallie/cs-visualized-useful-git-commands-37p1) and   
 - [Learning Git Branching](https://learngitbranching.js.org/?demo=&locale=zh_CN)  
+
+## Tool for netmask calculation
+> http://jodies.de/ipcalc 
+
+## Tax and income calculation
+> http://salarycalculator.sinaapp.com/
+
+## Online backupground removal
+> https://photoscissors.com/
+
+## Online drawing
+> https://creately.com/
+
+## Postgres Operation
+
+sudo docker pull postgres:9.6.16-alpine
+sudo docker run --name webdb -p 5432:5432 -e POSTGRES_USER=dbuser -e POSTGRES_PASSWORD=12345678 -d postgres:9.6.16-alpine
+psql -h localhost -U dbuser
+select * from pg_tables
+psql --version
+
+\l
+\c dbuser
+\dt
+\q
+
+# Connect to PostgreSQL using psql
+psql -U postgres -W
+
+# Switch to database that you want to work with, e.g. dvdrental
+postgres=# \c dvdrental
+Password for user postgres:
+You are now connected to database "dvdrental" as user "postgres".
+
+# Issue command '\d table_name' or '\d+ table_name' to describe a table
+dvdrental=# \d city
+
+# The 'information_scheme.columns' catalog contains the information on columns of all tables
+# To get information on columns of a table, query the 'information_schema.columns' catalog.
+
+SELECT
+   table_name,
+   column_name,
+   data_type
+FROM
+   information_schema.columns
+WHERE
+   table_name = 'city';
+
