@@ -137,6 +137,7 @@ $ sudo pip3 install asciinema
 ```
 $ asciinema rec demo.cast
 ```
+Note: use 'control + d' to stop record and save the recording
 - #### Usage: Play  
 ```
 $ asciinema play demo.cast
