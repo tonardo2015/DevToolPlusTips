@@ -10,7 +10,9 @@ crt_vg()
 {
   vg_name="$1"
   drives="$2"
-  vgcreate $vg_name $drives
+  cmd="vgcreate $vg_name $drives"
+  echo $cmd
+  $cmd
 }
 
 crt_lv()
@@ -20,13 +22,19 @@ crt_lv()
   size=$3
   mount_ptr=$4
 
-  lvcreate -n $lv_name --size $size $vg_data
-  mkfs.xfs /dev/$vg_data/$lv_name
+  cmd="lvcreate -n $lv_name --size $size $vg_name"
+  echo $cmd
+  $cmd
+  cmd="mkfs.xfs /dev/$vg_name/$lv_name"
+  echo $cmd
+  $cmd
   mkdir $mount_ptr
   drive_id=`blkid | grep $lv_name | cut -d'=' -f2 | cut -d' ' -f1 | xargs echo`
   echo $drive_id
   cfg_data_drive="UUID=$drive_id $mount_ptr xfs defaults 0 2"
-  echo "$cfg_data_drive" >> /etc/fstab
+  if [ -n "$drive_id" ]; then
+    echo "$cfg_data_drive" >> /etc/fstab
+  fi
 }
 
 format_drives()
@@ -37,19 +45,15 @@ format_drives()
     printf "n\n\n\n\n\nw\ny\n" | gdisk /dev/sd$d_id
   done
 
-  for d_id in "w x"; do
-    printf "n\n\n\n\n\nw\ny\n" | gdisk /dev/sd$d_id
-  done
-
   # extend system VG
   vg_name=`vgs | awk 'NR==2 {print $1}'`
-  #echo $vg_name
+  echo $vg_name
   sys_drive_list="/dev/sdb1 /dev/sdc1"
   vgextend $vg_name ${sys_drive_list}
 
   # /var directory corresponding device
   var_dev=`df -h -x squashfs -x tmpfs -x devtmpfs | grep /var | awk '{print $1}'`
-  #echo $var_dev
+  echo $var_dev
 
   lvextend -L+10T $var_dev
   fsadm resize $var_dev
@@ -65,13 +69,28 @@ format_drives()
   vg_data="vg01"
   lv_name="lv_data"
   mount_ptr_data="/data"
+
   crt_vg "$vg_data" "$data_drives"
   crt_lv "$vg_data" "$lv_name" "105T" "$mount_ptr_data"
 
+  mount -a
+}
+
+format_ssd_drives()
+{
   vg_ssd="vg05"
   ssd_lv_name="lv_ssd_data"
-  ssd_drives="/dev/sdw1 /dev/sdx1"
+  #ssd_drives="/dev/sdw1 /dev/sdx1"
+  ssd_drives=""
   mount_ptr_ssd="/ssd_data"
+
+  drive_id_list=$(echo {w..x})
+  for d_id in $drive_id_list; do
+    dev="/dev/sd${d_id}"
+    ssd_drives="${ssd_drives} ${dev}1"
+    printf "n\n\n\n\n\nw\ny\n" | gdisk $dev
+  done
+
   crt_vg "$vg_ssd" "$ssd_drives"
   crt_lv "$vg_ssd" "$ssd_lv_name" "850G" "$mount_ptr_ssd"
 
@@ -80,7 +99,6 @@ format_drives()
 
 get_size()
 {
-    #mount_ptr="/tmp"
     mount_ptr=$1
     vol=`df -H | grep $mount_ptr | awk '{print $1}'`
     size_all=`df -H | grep $mount_ptr | awk '{print $2}'`
@@ -93,13 +111,6 @@ get_size()
     eval "size_unit=$size_unit"
     eval "vol=$vol"
 }
-
-#mount_ptr="/tmp"
-#rst=$(get_size)
-#get_size $mount_ptr
-#echo ${size}
-#echo ${size_unit}
-#echo ${vol}
 
 extend()
 {
@@ -115,8 +126,8 @@ extend()
         echo "Invalid unit: $unit"
     fi
 
-#len=`echo ${#str}-2 | bc`
-#echo "${str:0:$len}"
+    #len=`echo ${#str}-2 | bc`
+    #echo "${str:0:$len}"
 
     len=`echo ${#target_size_all}-1 | bc`
     target_size=`echo "${target_size_all:0:$len}"`
@@ -129,6 +140,12 @@ extend()
     echo $cmd
 }
 
+#get_size $mount_ptr
+#echo ${size}
+#echo ${size_unit}
+#echo ${vol}
+
 #target_size_all=100G
 #extend $target_size_all ${vol}
 format_drives
+format_ssd_drives

@@ -72,7 +72,7 @@ find / | awk NR==3
 find / | awk 'NR==3 {print $0; exit}'
 
 # delete all the lines that aren't the second one
-ls -l | sed '2 ! d' 
+ls -l | sed '2 ! d'
 
 # print 'odd' lines 1,3,5...
 ls -l | awk '0==(NR+1)%2'
@@ -80,7 +80,7 @@ ls -l | awk '0==(NR+1)%2'
 ls -l | awk '0==(NR)%2'
 
 ls -l | (read; head -n1)
-``` 
+```
 
 ## Packet capturing
 
@@ -116,8 +116,8 @@ tcpdump -i eth0 proto 17
 sudo tcpdump -i eth0 -s0 -l port 80 | grep 'Server:'
 ```
 
-> 
-https://danielmiessler.com/study/tcpdump/  
+>
+https://danielmiessler.com/study/tcpdump/
 https://bencane.com/2014/10/13/quick-and-practical-reference-for-tcpdump/
 
 
@@ -128,24 +128,24 @@ echo $variable | xargs echo -n
 > The `xargs` removes all the delimiters from the string. By default it uses the space as delimiter. The `echo -n` will remove the end of line >>> [More info](https://stackoverflow.com/questions/369758/how-to-trim-whitespace-from-a-bash-variable)
 
 ## How to record command line operation
-> We can leverage `asciinema` to record and play command line operation.  
-- #### Installation  
+> We can leverage `asciinema` to record and play command line operation.
+- #### Installation
 ```
-$ sudo pip3 install asciinema 
+$ sudo pip3 install asciinema
 ```
-- #### Usage: Record  
+- #### Usage: Record
 ```
 $ asciinema rec demo.cast
 ```
 Note: To stop asciinema record and save the recording, try "control + d"
-- #### Usage: Play  
+- #### Usage: Play
 ```
 $ asciinema play demo.cast
 ```
-- #### Usage: Upload  
+- #### Usage: Upload
 ```
 $ asciinema upload <filename>
-```  
+```
 - #### How to use recorded screen in web
 > Use with stand-alone player on your website
 Download asciinema player from [player's releases page](https://github.com/asciinema/asciinema-player/releases) (you only need `.js` and `.css` file), then use it like this:
@@ -163,7 +163,7 @@ Download asciinema player from [player's releases page](https://github.com/ascii
 ```
 - More about [asciinema](https://asciinema.org/docs/usage)
 
-## Record screen using ffmpeg in Windows  
+## Record screen using ffmpeg in Windows
 - Download Setup Screen Capturer Recorder v0.12.10.noasync.exe from https://sourceforge.net/projects/screencapturer/files/
 - Install the "Screen Capturer Recorder" and add ffmpeg to Path
 - Check if the screen capture recorder and audio recorder installed successfully
@@ -172,7 +172,7 @@ ffmpeg -list_devices true -f dshow -i dummy
 ```
 - To capture with ffmpeg, try below command
 ```
-ffmpeg -f dshow -i video="screen-capture-recorder" -f dshow -i audio="virtual-audio-capturer" -pix_fmt yuv420p -vcodec libx264 -acodec libvo_aacenc -s 1280x720 -r 25 -q 10 -ar 44100 -ac 2 -tune zerolatency -preset ultrafast -f mpegts - | ffmpeg -f mpegts -i - -c copy -bsf:a aac_adtstoasc -f flv temp.flv  
+ffmpeg -f dshow -i video="screen-capture-recorder" -f dshow -i audio="virtual-audio-capturer" -pix_fmt yuv420p -vcodec libx264 -acodec libvo_aacenc -s 1280x720 -r 25 -q 10 -ar 44100 -ac 2 -tune zerolatency -preset ultrafast -f mpegts - | ffmpeg -f mpegts -i - -c copy -bsf:a aac_adtstoasc -f flv temp.flv
 ```
 
 ## How to update a python package using pip
@@ -194,8 +194,8 @@ If you want to batch update all packages, try below cmd
 for i in $(pip list -o | awk 'NR > 2 {print $1}'); do sudo pip install -U $i; done
 ```
 ## Variable compare with shell
-> - For string or regex test, try to use `==`, `=~` or `!=`  
-> - For integer, try to use `-eq`, `-gt`, `-lt`  
+> - For string or regex test, try to use `==`, `=~` or `!=`
+> - For integer, try to use `-eq`, `-gt`, `-lt`
 ```
 if [ "${PACKAGENAME}" = 'kakadu-v6_4-00902C' ]; then
     echo "successfully entered if block!!"
@@ -208,14 +208,14 @@ fi
 find . -name 'file.txt' -exec sed command {} +
 find . -name 'file.txt' -execdir sed command {} +
 find . -name 'file.txt' -type f | xargs sed command
-find . -name 'file.txt' -exec send command {} \;  
+find . -name 'file.txt' -exec send command {} \;
 find . -name 'file.txt' -print0 | xargs -0 sed 'some sed stuff' -i
 ```
-> Note:  
+> Note:
 `find -exec` spawns one process per file, while xargs uses one sed for all files, which is much faster if you have a lot of files
 
 ## Install ShellCheck in SLES 15/CentOS 7
-- What is [ShellCheck](https://github.com/koalaman/shellcheck)?  
+- What is [ShellCheck](https://github.com/koalaman/shellcheck)?
 ```
 ** SLES 15 **
 zypper addrepo https://download.opensuse.org/repositories/openSUSE:Backports:SLE-15-SP2/standard/openSUSE:Backports:SLE-15-SP2.repo
@@ -233,13 +233,13 @@ sudo yum install ShellCheck
 ```
 NeoBundle 'scrooloose/syntastic'
 ```
-Reference:  
-> [shellcheck-shell-script-code-analyzer-for-linux](https://www.tecmint.com/shellcheck-shell-script-code-analyzer-for-linux/)  
+Reference:
+> [shellcheck-shell-script-code-analyzer-for-linux](https://www.tecmint.com/shellcheck-shell-script-code-analyzer-for-linux/)
 > [ShellCheck Online](https://www.shellcheck.net/)
 
 ## How to kill one background process
 ```
-ps -eaf | grep [w]get 
+ps -eaf | grep [w]get
 kill <pid>
 
 pgrep wget
@@ -258,20 +258,20 @@ fg <jobId>
 ```
 
 ## VIM package manager collection
-- [Vim Plug](https://github.com/junegunn/vim-plug)  
+- [Vim Plug](https://github.com/junegunn/vim-plug)
     - Add `Plug 'bling/vim-airline'` in `~/.vimrc` then execute `:PlugInstall`
-- [Vundle](https://github.com/VundleVim/Vundle.vim)  
+- [Vundle](https://github.com/VundleVim/Vundle.vim)
     - Add `Plugin 'bling/vim-airline'` in `~/.vimrc` then execute `:PluginInstall`
     - [Vundle Tutorial](https://linuxhint.com/vim-vundle-tutorial/)
-- [Vim Pathogen](https://github.com/tpope/vim-pathogen)  
+- [Vim Pathogen](https://github.com/tpope/vim-pathogen)
     - `cd ~/.vim/bundle` then `git clone https://github.com/bling/vim-airline`
-- [vim-addon-manager(VAM)](https://github.com/MarcWeber/vim-addon-manager)  
-- [NeoBundle](https://github.com/Shougo/neobundle.vim)  
+- [vim-addon-manager(VAM)](https://github.com/MarcWeber/vim-addon-manager)
+- [NeoBundle](https://github.com/Shougo/neobundle.vim)
     - Add `NeoBundle 'vim-airline/vim-airline'` in `~/.vimrc` then execute `:NeoBundleInstall`
 
 
 ## How to solve the problem that you can't paste into vim
-> There are 2 options that you can do  
+> There are 2 options that you can do
 - Modify your .vimrc and add `set mouse=v`
 - Hold "Shift" and then Insert(`Ins` key)
 
@@ -318,26 +318,26 @@ filetype plugin indent on
 NeoBundleCheck
 "End NeoBundle Scripts-------------------------
 ```
-> `:NeoBundleList` - list configured bundles  
+> `:NeoBundleList` - list configured bundles
 > `:NeoBundleInstall(!)` - install (update) bundles
 
-> To install airline, add below line in your `~/.vimrc` 
+> To install airline, add below line in your `~/.vimrc`
 ```
 NeoBundle 'vim-airline/vim-airline'
-NeoBundle 'flazz/vim-colorschemes' 
+NeoBundle 'flazz/vim-colorschemes'
 ```
-> And then issue `:NeoBundleInstall` to do the installation  
+> And then issue `:NeoBundleInstall` to do the installation
 > `NeoBundle 'flazz/vim-colorschemes'` is for [VIM colorscheme](https://www.varstack.com/2015/07/08/Vim-Colorscheme/)
 
 ## How To Debug a Bash Shell Script Under Linux or UNIX
 > Run a shell script with -x option
 ```
 $ bash -x script-name
-```  
+```
 > Use of set builtin command
 Bash shell offers debugging options which can be turn on or off using the set command:
-- `set -x` : Display commands and their arguments as they are executed.  
-- `set -v` : Display shell input lines as they are read.  
+- `set -x` : Display commands and their arguments as they are executed.
+- `set -v` : Display shell input lines as they are read.
 
 #### Shell Intelligent Debug
 > Add a special variable named `_DEBUG` and set it to 'on' when debugging a script
@@ -355,7 +355,7 @@ function DEBUG()
 ```
 DEBUG echo "File is $filename"
 ```
-> OR 
+> OR
 ```
 DEBUG set -x
 Cmd1
@@ -385,9 +385,9 @@ _DEBUG="off"
 au bufnewfile *.sh 0r ~/.vim/sh_header.temp
 ```
 ## Cmder configuration
-- What is [Cmder](https://cmder.net/)  
+- What is [Cmder](https://cmder.net/)
 - How to install?
-    - Download from [Cmder site](https://cmder.net/) 
+    - Download from [Cmder site](https://cmder.net/)
     - Unzip
     - Put the executable to you preferred installation folder, e.g. `C:\Program Files\cmder`
     - Run `Cmder`
@@ -402,18 +402,18 @@ Shift + Alt + number : Fast new tab:
     2. PowerShell
 Alt + Enter : Fullscreen
 ```
-- Advanced configuration  
-    - change command prompt 
-    > Modify `vendor\clink.lua` in cmder installation folder and replace below lines with your changes  
+- Advanced configuration
+    - change command prompt
+    > Modify `vendor\clink.lua` in cmder installation folder and replace below lines with your changes
     ```
     local cmder_prompt = "\x1b[1;32;40m{cwd} {git}{hg}{svn} \n\x1b[2;37;40m{lamb} \x1b[0m"
     local lambda = "λ"
     ```
-    - How to solve the word overlap issue  
+    - How to solve the word overlap issue
     `Win + ALT + P` to launch configuration window and check off the 'Monospace' in 'Fonts'
 
-    - `ls` Chinese character support  
-    `WIN + ALT + P` to launch configuraiton window, `Startup` -> `Environment`, add one line `set LANG=zh_CN.UTF-8`  
+    - `ls` Chinese character support
+    `WIN + ALT + P` to launch configuraiton window, `Startup` -> `Environment`, add one line `set LANG=zh_CN.UTF-8`
 - [Cmder reference](https://www.jianshu.com/p/26acbe2c72a7)
 
 ## How to grant user `sudo` permission in CentOS
@@ -503,23 +503,23 @@ umount -f -l /some_mount_point
 ```
 ffmpeg -i "input.flv" -r 10 -b:a 32k 1.mp4
 ```
-> -i: input file  
--r 10: 10 frames per second  
--b:a 32k: sound code rate is 32kb/s, 3kB/s  
-1.mp4: output filename  
+> -i: input file
+-r 10: 10 frames per second
+-b:a 32k: sound code rate is 32kb/s, 3kB/s
+1.mp4: output filename
 
-- [FFmepg download](https://ffmpeg.org/download.html)  
+- [FFmepg download](https://ffmpeg.org/download.html)
 
 ## How to quickly edit Windows Path
-> Win+Q -> input "Path" in the search box  
+> Win+Q -> input "Path" in the search box
 
 ## How to use git
-> Refer to 
-- [Useful Git Command](https://dev.to/lydiahallie/cs-visualized-useful-git-commands-37p1) and   
-- [Learning Git Branching](https://learngitbranching.js.org/?demo=&locale=zh_CN)  
+> Refer to
+- [Useful Git Command](https://dev.to/lydiahallie/cs-visualized-useful-git-commands-37p1) and
+- [Learning Git Branching](https://learngitbranching.js.org/?demo=&locale=zh_CN)
 
 ### Tool for netmask calculation
-> http://jodies.de/ipcalc 
+> http://jodies.de/ipcalc
 
 ### Tax and income calculation
 > http://salarycalculator.sinaapp.com/
@@ -533,16 +533,16 @@ ffmpeg -i "input.flv" -r 10 -b:a 32k 1.mp4
 ### Postgres Operation
 
 ```c
-sudo docker pull postgres:9.6.16-alpine  
-sudo docker run --name webdb -p 5432:5432 -e POSTGRES_USER=dbuser -e POSTGRES_PASSWORD=12345678 -d postgres:9.6.16-alpine  
+sudo docker pull postgres:9.6.16-alpine
+sudo docker run --name webdb -p 5432:5432 -e POSTGRES_USER=dbuser -e POSTGRES_PASSWORD=12345678 -d postgres:9.6.16-alpine
 
 psql -h localhost -U dbuser
 select * from pg_tables
 psql --version
 
-\l  
-\c dbuser  
-\dt  
+\l
+\c dbuser
+\dt
 \q
 ```
 
@@ -572,4 +572,29 @@ FROM
    information_schema.columns
 WHERE
    table_name = 'city';
+```
+
+#### How to tell a drive is SSD or not
+```
+# sg_vpd --page=bdc /dev/sdw
+Block device characteristics VPD page (SBC):
+  Non-rotating medium (e.g. solid state)
+  Product type: Not specified
+  WABEREQ=0
+  WACEREQ=0
+  Nominal form factor: 2.5 inch
+  FUAB=0
+  VBULS=0
+
+# find /sys/block/* -maxdepth 1 -exec echo {} \; -exec grep '0' {}/queue/rotational \; | grep -B1 '^0' | grep '^/' | sed 's/^.*\///g'
+
+# cat /proc/scsi/scsi
+# cat /sys/block/sdw/queue/rotational
+
+### if the output if "0", it is SSD
+
+# sudo smartctl -a /dev/sdw
+### if the "Rotation Rate" is "Solid State Device", then the drive is SSD
+
+# lsblk -d -o name,rota
 ```
