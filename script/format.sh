@@ -148,4 +148,4 @@ extend()
 #target_size_all=100G
 #extend $target_size_all ${vol}
 format_drives
-format_ssd_drives
+#format_ssd_drives
