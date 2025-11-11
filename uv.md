@@ -58,4 +58,7 @@ uv pip install --upgrade requests
 ```
 uv pip upgrade --all
 ```
-
+##### Change to use internal PyPI mirror
+```
+uv pip install akshare --index-url https://mirrors.aliyun.com/pypi/simple/
+```
